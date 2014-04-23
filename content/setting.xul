@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://subjectcleaner/locale/subjectcleaner.dtd">
+
+<dialog id="setting" title="&setting.title;"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    buttons="accept,cancel"
+    onload="SubjectCleanerSetting.startup()"
+    ondialogaccept="return SubjectCleanerSetting.doOK();"
+    ondialogcancel="return SubjectCleanerSetting.doCancel();">
+
+  <script type="application/x-javascript" src="chrome://global/content/nsUserSettings.js"/>
+  <script type="application/x-javascript" src="chrome://subjectcleaner/content/prefutil.js"/>
+  <script type="application/x-javascript" src="chrome://subjectcleaner/content/clean.js"/>
+  <script type="application/x-javascript" src="chrome://subjectcleaner/content/setting.js"/>
+
+  <tabbox id="myTabList" selectedIndex="0">
+    <tabs>
+      <tab label="&setting.tab.setting;"/>
+      <tab label="&setting.tab.test;"/>
+    </tabs>
+    <tabpanels>
+      <tabpanel>
+        <vbox>
+          <groupbox>
+            <caption label="&setting.removallist.group;"/>
+            <hbox>
+              <listbox id="removalList" width="350" height="92" onselect="SubjectCleanerSetting.setSelectedItem(this.selectedItem);"/>
+              <vbox>
+                <button flex="1" id="add" label="&setting.removallist.button.add;"/>
+                <button flex="1" id="edit" label="&setting.removallist.button.edit;"/>
+                <button flex="1" id="delete" label="&setting.removallist.button.delete;"/>
+              </vbox>
+            </hbox>
+            <separator class="thin"/>
+            <checkbox id="isCaseSensitive" label="&setting.removallist.checkbox.casesensitive;"/>
+            <checkbox id="isRegExp" label="&setting.removallist.checkbox.regexp;"/>
+          </groupbox>
+          <groupbox>
+            <caption label="&setting.auto.group;"/>
+            <checkbox id="isAuto" label="&setting.auto.checkbox.auto;"/>
+          </groupbox>
+        </vbox>
+      </tabpanel>
+      <tabpanel>
+        <groupbox>
+          <caption label="&setting.test.group;"/>
+          <vbox>
+            <label value="&setting.test.label;"/>
+            <hbox>
+              <textbox id="testBox" width="350"/>
+              <button id="test" label="&setting.test.button.execute;"/>
+            </hbox>
+          </vbox>
+        </groupbox>
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
+
+</dialog>
