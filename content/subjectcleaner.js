@@ -41,7 +41,9 @@ if("undefined" == typeof(SubjectCleanerChrome)){
       var msgSubjectLabel = null;
       var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
       var versionChecker = Components.classes["@mozilla.org/xpcom/version-comparator;1"].getService(Components.interfaces.nsIVersionComparator);
-      if(versionChecker.compare(appInfo.version, "5.0") >= 0){
+      if(versionChecker.compare(appInfo.version, "31.0") >= 0){
+        msgSubjectLabel = document.getElementById("subjectLabel");
+      }else if(versionChecker.compare(appInfo.version, "5.0") >= 0){
         msgSubjectLabel = document.getElementById("msgSubject").previousSibling.firstChild;
       }else{
         msgSubjectLabel = document.getElementById("msgSubject").previousSibling;
