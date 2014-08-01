@@ -40,6 +40,9 @@
             <caption label="&setting.auto.group;"/>
             <checkbox id="isAuto" label="&setting.auto.checkbox.auto;"/>
           </groupbox>
+          <hbox align="right">
+            <button id="default" label="&setting.default;"/>
+          </hbox>
         </vbox>
       </tabpanel>
       <tabpanel>

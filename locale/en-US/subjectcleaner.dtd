@@ -13,3 +13,4 @@
 <!ENTITY setting.test.label "Input the subject and execute.">
 <!ENTITY setting.test.button.execute "execute">
 <!ENTITY setting.add.title "Removal string setting">
+<!ENTITY setting.default "default">

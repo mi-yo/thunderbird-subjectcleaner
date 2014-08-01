@@ -14,27 +14,13 @@ if("undefined" == typeof(SubjectCleanerSetting)){
       document.getElementById("edit").addEventListener("command", SubjectCleanerSetting.edit, true);
       document.getElementById("delete").addEventListener("command", SubjectCleanerSetting.delete, true);
       document.getElementById("test").addEventListener("command", SubjectCleanerSetting.test, true);
+      document.getElementById("default").addEventListener("command", SubjectCleanerSetting.default, true);
 
-      var removalList = document.getElementById("removalList");
-      var prefRemovalList = SubjectCleanerPrefUtil.getRemovalList();
-      if(prefRemovalList != null && prefRemovalList.length != 0){
-        for(var i=0; i<prefRemovalList.length; i++){
-          var listitem = document.createElement("listitem");
-          listitem.setAttribute("label", prefRemovalList[i]);
-          listitem.setAttribute("id", Math.random());
-          removalList.appendChild(listitem);
-        }
-      }
-      removalList.selectedIndex = 0;
-
-      var isCaseSensitive = document.getElementById("isCaseSensitive");
-      isCaseSensitive.setAttribute("checked", (!SubjectCleanerPrefUtil.isIgnoreCase()).toString());
-
-      var isRegExp = document.getElementById("isRegExp");
-      isRegExp.setAttribute("checked", SubjectCleanerPrefUtil.isRegExp().toString());
-
-      var isAuto = document.getElementById("isAuto");
-      isAuto.setAttribute("checked", SubjectCleanerPrefUtil.isAuto().toString());
+      SubjectCleanerSetting.fill(
+        SubjectCleanerPrefUtil.getRemovalList(),
+        (!SubjectCleanerPrefUtil.isIgnoreCase()).toString(),
+        SubjectCleanerPrefUtil.isRegExp().toString(),
+        SubjectCleanerPrefUtil.isAuto().toString());
     },
 
     setSelectedItem : function(item){
@@ -105,6 +91,35 @@ if("undefined" == typeof(SubjectCleanerSetting)){
         testBox.value = cleanResult;
       }
       testBox.focus();
+    },
+
+    default : function(event){
+      SubjectCleanerSetting.fill(
+        ["\\[\\w+:\\d+\\](\\s|)", "\\sRe:+"],
+        "false",
+        "true",
+        "true");
+    },
+
+    fill : function(removalList, isCaseSensitive, isRegExp, isAuto){
+      var viewRemovalList = document.getElementById("removalList");
+      if(removalList != null && removalList.length != 0){
+        while (viewRemovalList.firstChild) {
+          viewRemovalList.removeChild(viewRemovalList.firstChild);
+        }
+
+        for(var i=0; i<removalList.length; i++){
+          var listitem = document.createElement("listitem");
+          listitem.setAttribute("label", removalList[i]);
+          listitem.setAttribute("id", Math.random());
+          viewRemovalList.appendChild(listitem);
+        }
+      }
+      viewRemovalList.selectedIndex = 0;
+
+      document.getElementById("isCaseSensitive").setAttribute("checked", isCaseSensitive);
+      document.getElementById("isRegExp").setAttribute("checked", isRegExp);
+      document.getElementById("isAuto").setAttribute("checked", isAuto);
     },
 
     doOK : function(){
