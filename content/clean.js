@@ -1,26 +1,25 @@
 if("undefined" == typeof(SubjectCleanerClean)){
   var SubjectCleanerClean = {
-    clean : function(src, removalList, isIgnoreCase, isRegExp){
-      var dst = src;
-      if(src === null || removalList === null || removalList.length === 0 || isIgnoreCase === null || isRegExp === null){
-        return dst;
-      }
-
-      var flags = "g";
-      if(isIgnoreCase){
-        flags += "i";
+    clean : function(srcSubject, removalList){
+      var dstSubject = srcSubject;
+      if(srcSubject === null || removalList === null || removalList.length === 0){
+        return dstSubject;
       }
 
       for(var i=0; i<removalList.length; i++){
-        if(isRegExp){
-          var r = new RegExp(removalList[i], flags);
-          dst = dst.replace(r, '');
+        var flags = "g";
+        if(!removalList[i].caseSensitive){
+          flags += "i";
+        }
+
+        if(removalList[i].regexp){
+          dstSubject = dstSubject.replace(new RegExp(removalList[i].removalString, flags), '');
         }else{
-          dst = dst.replace(removalList[i], '', flags);
+          dstSubject = dstSubject.replace(removalList[i].removalString, '', flags);
         }
       }
 
-      return dst;
+      return dstSubject;
     }
   }
 };

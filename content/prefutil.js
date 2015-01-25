@@ -1,87 +1,50 @@
 if("undefined" == typeof(SubjectCleanerPrefUtil)){
   var SubjectCleanerPrefUtil = {
-    PREF : Components.classes['@mozilla.org/preferences;1'].getService(Components.interfaces.nsIPrefBranch),
+    PREF_DEFAULT : Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getDefaultBranch("extensions.subjectcleaner."),
+    PREF_USER : Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.subjectcleaner."),
 
-    REMOVAL_LIST_KEY : "subjectcleaner.removalList",
-    REMOVAL_LIST_LENGTHS_KEY : "subjectcleaner.removalListLengths",
-    IS_IGNORE_CASE_KEY : "subjectcleaner.isIgnoreCase",
-    IS_REGEXP_KEY : "subjectcleaner.isRegExp",
-    IS_AUTO_KEY : "subjectcleaner.isAuto",
+    PREF_KEY_REMOVALLIST : "removalList",
+    PREF_KEY_AUTOREMOVE : "autoRemove",
+    PREF_KEY_AUTOFOCUS : "autoFocus",
 
-    getRemovalList : function(){
-      var removalListStr = SubjectCleanerPrefUtil.getPref(SubjectCleanerPrefUtil.REMOVAL_LIST_KEY);
-      var removalListLengthsStr = SubjectCleanerPrefUtil.getPref(SubjectCleanerPrefUtil.REMOVAL_LIST_LENGTHS_KEY);
-      var removalList = new Array();
-      if(removalListLengthsStr != null && removalListLengthsStr.length != 0){
-        var removalListLengths = removalListLengthsStr.split(",");
-        var startIndex = 0;
-        for(var i=0; i<removalListLengths.length; i++){
-          var removalListLength = parseInt(removalListLengths[i]);
-          var removalString = removalListStr.substring(startIndex, startIndex + removalListLength);
-          removalList.push(removalString);
-          startIndex += removalListLength + 1;
-        }
-      }else{
-        // restore ver.1.0.1 setting
-        if(removalListStr != null && removalListStr.length != 0){
-          return removalListStr.split(",");
-        }
+    getDefaultRemovalList : function(){
+      try{
+        return JSON.parse(SubjectCleanerPrefUtil.PREF_DEFAULT.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString).data);
+      }catch(e){
+        return null;
       }
-      return removalList;
+    },
+    getRemovalList : function(){
+      try{
+        return JSON.parse(SubjectCleanerPrefUtil.PREF_USER.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString).data);
+      }catch(e){
+        return null;
+      }
     },
     setRemovalList : function(removalList){
-      var removalListLengths = new Array();
-      for(var i=0; i<removalList.length; i++){
-        removalListLengths.push(removalList[i].length);
-      }
-      nsPreferences.setUnicharPref(SubjectCleanerPrefUtil.REMOVAL_LIST_KEY, removalList.join(","));
-      nsPreferences.setUnicharPref(SubjectCleanerPrefUtil.REMOVAL_LIST_LENGTHS_KEY, removalListLengths.join(","));
+      var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
+      str.data = JSON.stringify(removalList);
+      SubjectCleanerPrefUtil.PREF_USER.setComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString, str);
     },
 
-    isIgnoreCase : function(){
-      return SubjectCleanerPrefUtil.getPref(SubjectCleanerPrefUtil.IS_IGNORE_CASE_KEY);
+    isDefaultAutoRemove : function(){
+      return SubjectCleanerPrefUtil.PREF_DEFAULT.getBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOREMOVE);
     },
-    setIgnoreCase : function(isIgnoreCase){
-      nsPreferences.setBoolPref(SubjectCleanerPrefUtil.IS_IGNORE_CASE_KEY, isIgnoreCase);
+    isAutoRemove : function(){
+      return SubjectCleanerPrefUtil.PREF_USER.getBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOREMOVE);
     },
-
-    isRegExp : function(){
-      return SubjectCleanerPrefUtil.getPref(SubjectCleanerPrefUtil.IS_REGEXP_KEY);
-    },
-    setRegExp : function(isRegExp){
-      nsPreferences.setBoolPref(SubjectCleanerPrefUtil.IS_REGEXP_KEY, isRegExp);
+    setAutoRemove : function(autoRemove){
+      SubjectCleanerPrefUtil.PREF_USER.setBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOREMOVE, autoRemove);
     },
 
-    isAuto : function(){
-      return SubjectCleanerPrefUtil.getPref(SubjectCleanerPrefUtil.IS_AUTO_KEY);
+    isDefaultAutoFocus : function(){
+      return SubjectCleanerPrefUtil.PREF_DEFAULT.getBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOFOCUS);
     },
-    setAuto : function(isAuto){
-      nsPreferences.setBoolPref(SubjectCleanerPrefUtil.IS_AUTO_KEY, isAuto);
+    isAutoFocus : function(){
+      return SubjectCleanerPrefUtil.PREF_USER.getBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOFOCUS);
     },
-
-    getPref : function(prefString){
-      try{
-        const nsIPrefBranch = Components.interfaces.nsIPrefBranch;
-        var value = "";
-        var type = SubjectCleanerPrefUtil.PREF.getPrefType(prefString);
-        switch(type){
-        case nsIPrefBranch.PREF_STRING:
-          value = nsPreferences.copyUnicharPref(prefString, "");
-          break;
-        case nsIPrefBranch.PREF_INT:
-          value = nsPreferences.getIntPref(prefString, 0);
-          break;
-        case nsIPrefBranch.PREF_BOOL:
-          value = nsPreferences.getBoolPref(prefString, false);
-          break;
-        default:
-          break;
-        }
-        return value;
-
-      }catch(e){
-        return "";
-      }
+    setAutoFocus : function(autoFocus){
+      SubjectCleanerPrefUtil.PREF_USER.setBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOFOCUS, autoFocus);
     }
   }
 };

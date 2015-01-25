@@ -11,7 +11,10 @@
 
   <script type="application/x-javascript" src="chrome://subjectcleaner/content/settingadd.js"/>
 
-  <textbox id="textbox"/>
+  <label value="&setting.removallist.removalstring;"/>
+  <textbox id="removalString"/>
+  <checkbox id="caseSensitive" label="&setting.removallist.casesensitive;"/>
+  <checkbox id="regexp" label="&setting.removallist.regexp;"/>
 
   <separator class="thin"/>
 

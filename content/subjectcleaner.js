@@ -9,7 +9,7 @@ if("undefined" == typeof(SubjectCleanerChrome)){
   var SubjectCleanerChrome = {
     BUNDLE : Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService).createBundle("chrome://subjectcleaner/locale/subjectcleaner.properties"),
 
-    notify : function(timer){  
+    notify : function(timer){
       SubjectCleanerChrome.init();
     },
 
@@ -18,8 +18,9 @@ if("undefined" == typeof(SubjectCleanerChrome)){
       NotifyComposeBodyReady: function(){
         // StateListener only works in reply-cases.("Undo" operation)
         // So activate later.
-        var timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
-        timer.initWithCallback(SubjectCleanerChrome, 0, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
+        Components.classes["@mozilla.org/timer;1"]
+          .createInstance(Components.interfaces.nsITimer)
+          .initWithCallback(SubjectCleanerChrome, 0, Components.interfaces.nsITimer.TYPE_ONE_SHOT);
       },
       ComposeProcessDone: function(aResult){},
       SaveInFolderDone: function(folderURI){}
@@ -33,8 +34,7 @@ if("undefined" == typeof(SubjectCleanerChrome)){
     },
 
     init : function(){
-      var isAuto = SubjectCleanerPrefUtil.isAuto();
-      if(isAuto){
+      if(SubjectCleanerPrefUtil.isAutoRemove()){
         SubjectCleanerChrome.clean();
       }
 
@@ -50,7 +50,7 @@ if("undefined" == typeof(SubjectCleanerChrome)){
       }
       if(msgSubjectLabel.nodeName === "label" && msgSubjectLabel.control === "msgSubject"){
         msgSubjectLabel.setAttribute("tooltiptext", SubjectCleanerChrome.BUNDLE.GetStringFromName("msgcomposewindow.msgsubject.label.tooltiptext"));
-        msgSubjectLabel.setAttribute("class", "subject-cleaner-label");
+        msgSubjectLabel.setAttribute("class", "subjectcleaner-label");
         msgSubjectLabel.removeEventListener("click", SubjectCleanerChrome.clean, false);
         msgSubjectLabel.addEventListener("click", SubjectCleanerChrome.clean, false);
       }
@@ -62,13 +62,15 @@ if("undefined" == typeof(SubjectCleanerChrome)){
         return;
       }
 
-      var cleanResult = SubjectCleanerClean.clean(msgSubject.value, SubjectCleanerPrefUtil.getRemovalList(), SubjectCleanerPrefUtil.isIgnoreCase(), SubjectCleanerPrefUtil.isRegExp());
+      var cleanResult = SubjectCleanerClean.clean(msgSubject.value, SubjectCleanerPrefUtil.getRemovalList());
       if(msgSubject.value === cleanResult){
         return;
       }
 
       msgSubject.value = cleanResult;
-      msgSubject.focus();
+      if(SubjectCleanerPrefUtil.isAutoFocus()){
+        msgSubject.focus();
+      }
       //gContentChanged = true;
       SetComposeWindowTitle();
     }
