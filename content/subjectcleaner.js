@@ -28,7 +28,7 @@ if("undefined" == typeof(SubjectCleanerChrome)){
 
     load : function(){
       var msgcomposeWindow = document.getElementById("msgcomposeWindow");
-      if(msgcomposeWindow != null){
+      if(msgcomposeWindow !== null){
         msgcomposeWindow.addEventListener("compose-window-init", function(){gMsgCompose.RegisterStateListener(SubjectCleanerChrome.stateListener);}, false);
       }
     },

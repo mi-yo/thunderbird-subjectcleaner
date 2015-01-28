@@ -17,8 +17,8 @@ if("undefined" == typeof(SubjectCleanerSetting)){
 
       SubjectCleanerSetting.fill(
         SubjectCleanerPrefUtil.getRemovalList(),
-        SubjectCleanerPrefUtil.isAutoRemove().toString(),
-        SubjectCleanerPrefUtil.isAutoFocus().toString());
+        SubjectCleanerPrefUtil.isAutoRemove(),
+        SubjectCleanerPrefUtil.isAutoFocus());
     },
 
     setSelectedItem : function(item){
@@ -119,8 +119,7 @@ if("undefined" == typeof(SubjectCleanerSetting)){
       if(testBox.value === null || testBox.value.length === 0){
         return;
       }
-      var removalList = SubjectCleanerSetting.getRemovalList();
-      var cleanResult = SubjectCleanerClean.clean(testBox.value, removalList);
+      var cleanResult = SubjectCleanerClean.clean(testBox.value, SubjectCleanerSetting.getRemovalList());
       if(testBox.value !== cleanResult){
         testBox.value = cleanResult;
       }
@@ -136,7 +135,7 @@ if("undefined" == typeof(SubjectCleanerSetting)){
 
     fill : function(removalList, autoRemove, autoFocus){
       var viewRemovalList = document.getElementById("removalList");
-      if(removalList != null && removalList.length != 0){
+      if(removalList !== null && removalList.length !== 0){
         var itemCount = viewRemovalList.itemCount;
         for(var i=itemCount-1; i>=0; i--){
           viewRemovalList.removeItemAt(i);

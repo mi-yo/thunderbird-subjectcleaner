@@ -11,14 +11,14 @@ if("undefined" == typeof(SubjectCleanerPrefUtil)){
       try{
         return JSON.parse(SubjectCleanerPrefUtil.PREF_DEFAULT.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString).data);
       }catch(e){
-        return null;
+        return new Array();
       }
     },
     getRemovalList : function(){
       try{
         return JSON.parse(SubjectCleanerPrefUtil.PREF_USER.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString).data);
       }catch(e){
-        return null;
+        return new Array();
       }
     },
     setRemovalList : function(removalList){
