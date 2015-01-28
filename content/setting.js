@@ -169,6 +169,10 @@ if("undefined" == typeof(SubjectCleanerSetting)){
         autoFocus = document.getElementById("autoFocus").checked;
       }
       SubjectCleanerPrefUtil.setAutoFocus(autoFocus);
+
+      // compatible with ver.1.2.0
+      SubjectCleanerPrefUtil.deleteOldPref();
+
       return true;
     },
 

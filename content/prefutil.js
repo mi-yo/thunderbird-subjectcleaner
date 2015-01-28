@@ -15,6 +15,12 @@ if("undefined" == typeof(SubjectCleanerPrefUtil)){
       }
     },
     getRemovalList : function(){
+      // compatible with ver.1.2.0
+      var removalList = SubjectCleanerPrefUtil.getRemovalListFromOldPref();
+      if(removalList.length !== 0){
+        return removalList;
+      }
+
       try{
         return JSON.parse(SubjectCleanerPrefUtil.PREF_USER.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString).data);
       }catch(e){
@@ -31,6 +37,12 @@ if("undefined" == typeof(SubjectCleanerPrefUtil)){
       return SubjectCleanerPrefUtil.PREF_DEFAULT.getBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOREMOVE);
     },
     isAutoRemove : function(){
+      // compatible with ver.1.2.0
+      var autoRemove = SubjectCleanerPrefUtil.isAutoRemoveFromOldPref();
+      if(autoRemove !== null){
+        return autoRemove;
+      }
+
       return SubjectCleanerPrefUtil.PREF_USER.getBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOREMOVE);
     },
     setAutoRemove : function(autoRemove){
@@ -45,6 +57,84 @@ if("undefined" == typeof(SubjectCleanerPrefUtil)){
     },
     setAutoFocus : function(autoFocus){
       SubjectCleanerPrefUtil.PREF_USER.setBoolPref(SubjectCleanerPrefUtil.PREF_KEY_AUTOFOCUS, autoFocus);
+    },
+
+    // compatible with ver.1.2.0
+    getRemovalListFromOldPref : function(){
+      var oldPref = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("subjectcleaner.");
+
+      var removalListStr = null;
+      try{
+        removalListStr = oldPref.getComplexValue("removalList", Components.interfaces.nsISupportsString).data;
+      }catch(e){
+      }
+      var removalListLengthsStr = null;
+      try{
+        removalListLengthsStr = oldPref.getComplexValue("removalListLengths", Components.interfaces.nsISupportsString).data;
+      }catch(e){
+      }
+      var removalStringArray = new Array();
+      if(removalListStr !== null && removalListStr.length !== 0 && removalListLengthsStr !== null && removalListLengthsStr.length !== 0){
+        // restore ver.1.2.0 setting
+        var removalListLengths = removalListLengthsStr.split(",");
+        var startIndex = 0;
+        for(var i=0; i<removalListLengths.length; i++){
+          var removalListLength = parseInt(removalListLengths[i]);
+          var removalString = removalListStr.substring(startIndex, startIndex + removalListLength);
+          removalStringArray.push(removalString);
+          startIndex += removalListLength + 1;
+        }
+      }else{
+        // restore ver.1.0.1 setting
+        if(removalListStr !== null && removalListStr.length !== 0){
+          removalStringArray = removalListStr.split(",");
+        }
+      }
+
+      var caseSensitive = false;
+      try{
+        caseSensitive = !oldPref.getBoolPref("isIgnoreCase");
+      }catch(e){
+      }
+      var regexp = true;
+      try{
+        regexp = oldPref.getBoolPref("isRegExp");
+      }catch(e){
+      }
+      var removalList = new Array();
+      for(var i=0; i<removalStringArray.length; i++){
+        var removal = {};
+        removal.removalString = removalStringArray[i];
+        removal.caseSensitive = caseSensitive;
+        removal.regexp = regexp;
+        removalList.push(removal);
+      }
+
+      return removalList;
+    },
+
+    // compatible with ver.1.2.0
+    isAutoRemoveFromOldPref : function(){
+      var oldPref = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("subjectcleaner.");
+
+      var autoRemove = null;
+      try{
+        autoRemove = oldPref.getBoolPref("isAuto");
+      }catch(e){
+      }
+
+      return autoRemove;
+    },
+
+    // compatible with ver.1.2.0
+    deleteOldPref : function(){
+      try{
+        Components.classes["@mozilla.org/preferences-service;1"]
+          .getService(Components.interfaces.nsIPrefService)
+          .getBranch("subjectcleaner.")
+          .deleteBranch("");
+      }catch(e){
+      }
     }
   }
 };
