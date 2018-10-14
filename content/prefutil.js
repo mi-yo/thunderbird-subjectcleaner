@@ -7,10 +7,17 @@ if("undefined" == typeof(SubjectCleanerPrefUtil)){
     PREF_KEY_AUTOREMOVE : "autoRemove",
     PREF_KEY_AUTOFOCUS : "autoFocus",
 
+    getInterfaceComplexValueAtype : function(){
+      var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
+      var versionChecker = Components.classes["@mozilla.org/xpcom/version-comparator;1"].getService(Components.interfaces.nsIVersionComparator);
+      var atype = versionChecker.compare(appInfo.version, "60.0") >= 0 ? Components.interfaces.nsIPrefLocalizedString : Components.interfaces.nsISupportsString;
+      return atype;
+    },
     getDefaultRemovalList : function(){
       try{
-        return JSON.parse(SubjectCleanerPrefUtil.PREF_DEFAULT.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString).data);
+        return JSON.parse(SubjectCleanerPrefUtil.PREF_DEFAULT.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, SubjectCleanerPrefUtil.getInterfaceComplexValueAtype()).data);
       }catch(e){
+        console.log(e);
         return new Array();
       }
     },
@@ -22,15 +29,16 @@ if("undefined" == typeof(SubjectCleanerPrefUtil)){
       }
 
       try{
-        return JSON.parse(SubjectCleanerPrefUtil.PREF_USER.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString).data);
+        return JSON.parse(SubjectCleanerPrefUtil.PREF_USER.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, SubjectCleanerPrefUtil.getInterfaceComplexValueAtype()).data);
       }catch(e){
+        console.log(e);
         return new Array();
       }
     },
     setRemovalList : function(removalList){
       var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
       str.data = JSON.stringify(removalList);
-      SubjectCleanerPrefUtil.PREF_USER.setComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, Components.interfaces.nsISupportsString, str);
+      SubjectCleanerPrefUtil.PREF_USER.setComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, SubjectCleanerPrefUtil.getInterfaceComplexValueAtype(), str);
     },
 
     isDefaultAutoRemove : function(){
@@ -65,12 +73,12 @@ if("undefined" == typeof(SubjectCleanerPrefUtil)){
 
       var removalListStr = null;
       try{
-        removalListStr = oldPref.getComplexValue("removalList", Components.interfaces.nsISupportsString).data;
+        removalListStr = oldPref.getComplexValue("removalList", SubjectCleanerPrefUtil.getInterfaceComplexValueAtype()).data;
       }catch(e){
       }
       var removalListLengthsStr = null;
       try{
-        removalListLengthsStr = oldPref.getComplexValue("removalListLengths", Components.interfaces.nsISupportsString).data;
+        removalListLengthsStr = oldPref.getComplexValue("removalListLengths", SubjectCleanerPrefUtil.getInterfaceComplexValueAtype()).data;
       }catch(e){
       }
       var removalStringArray = new Array();
