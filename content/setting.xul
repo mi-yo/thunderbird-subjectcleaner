@@ -24,20 +24,13 @@
       <tabpanel>
         <vbox>
           <hbox>
-            <listbox id="removalList" width="500" height="146" onselect="SubjectCleanerSetting.setSelectedItem(this.selectedItem);">
-              <listhead>
-                <listheader label="&setting.removallist.removalstring;"/>
-                <listheader label="&setting.removallist.casesensitive;"/>
-                <listheader label="&setting.removallist.regexp;"/>
-                <listheader/>
-              </listhead>
-              <listcols>
-                <listcol flex="1"/>
-                <listcol/>
-                <listcol/>
-                <listcol/>
-              </listcols>
-            </listbox>
+            <richlistbox id="removalList" width="350" height="146" rows="4" flex="1" onselect="SubjectCleanerSetting.setSelectedItem(this.selectedItem);">
+              <listheader>
+                <treecol style="font-weight:bold;" label="&setting.removallist.removalstring;" width="200" flex="1" />
+                <treecol style="font-weight:bold;" label="&setting.removallist.casesensitive;" width="60" flex="1" />
+                <treecol style="font-weight:bold;" label="&setting.removallist.regexp;" width="60" flex="1" />
+              </listheader>
+            </richlistbox>
             <vbox>
               <button id="add" label="&setting.removallist.button.add;"/>
               <button id="edit" label="&setting.removallist.button.edit;"/>
