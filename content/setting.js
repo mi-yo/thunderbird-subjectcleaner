@@ -14,6 +14,19 @@ if("undefined" == typeof(SubjectCleanerSetting)){
       document.getElementById("test").addEventListener("command", SubjectCleanerSetting.test, true);
       document.getElementById("default").addEventListener("command", SubjectCleanerSetting.default, true);
       document.getElementById("autoRemove").addEventListener("CheckboxStateChange", SubjectCleanerSetting.setAutoFocusStatus, true);
+      
+      document.addEventListener("dialogaccept", function(event) {
+    let ret = SubjectCleanerSetting.doOK();
+    if (ret == -1) { //onAccept()がエラーを返したときに、ダイアログを閉じない場合
+        event.preventDefault();
+    }
+});
+       document.addEventListener("dialogcancel", function(event) {
+    let ret = SubjectCleanerSetting.doCancel();
+    if (ret == -1) { //onAccept()がエラーを返したときに、ダイアログを閉じない場合
+        event.preventDefault();
+    }
+});
 
       SubjectCleanerSetting.fill(
         SubjectCleanerPrefUtil.getRemovalList(),
@@ -22,19 +35,23 @@ if("undefined" == typeof(SubjectCleanerSetting)){
     },
 
     setSelectedItem : function(item){
-      SubjectCleanerSetting.selectedItem = item;
+          var removalList = document.getElementById("removalList");
+    
+      SubjectCleanerSetting.selectedItem = removalList.selectedItem;//item;
     },
 
     getRemovalList : function(){
       var removalList = new Array();
       var nodes = document.getElementById("removalList").childNodes;
+      
+      
       for(var i=0; i<nodes.length; i++){
-        if(nodes[i].nodeName === "listitem"){
-          var listCells = nodes[i].childNodes;
+        if(nodes[i].nodeName === "richlistitem"){
+          var listCells = nodes[i].children
           var removal = {};
-          removal.removalString = listCells[0].getAttribute("label");
-          removal.caseSensitive = JSON.parse(listCells[1].getAttribute("checked"));
-          removal.regexp = JSON.parse(listCells[2].getAttribute("checked"));
+          removal.removalString = listCells[0].value;
+          removal.caseSensitive = listCells[1].getAttribute("checked");
+          removal.regexp = listCells[2].getAttribute("checked");
           removalList.push(removal);
         }
       }
@@ -42,14 +59,24 @@ if("undefined" == typeof(SubjectCleanerSetting)){
     },
 
     createListItem : function(removalString, caseSensitive, regexp){
-      var listItem = document.createElement("listitem");
+      var listItem = document.createElement("richlistitem");
       listItem.setAttribute("class", "subjectcleaner-setting-listitem");
       listItem.setAttribute("id", Math.random());
 
-      SubjectCleanerSetting.createListCell(listItem, {"label":removalString});
-      var checkboxClass = "subjectcleaner-setting-checkbox";
-      SubjectCleanerSetting.createListCell(listItem, {"class":checkboxClass, "type":"checkbox", "checked":caseSensitive});
-      SubjectCleanerSetting.createListCell(listItem, {"class":checkboxClass, "type":"checkbox", "checked":regexp});
+      let newLabel = document.createElement("label");
+      newLabel.value = removalString;
+      newLabel.setAttribute("width", 200);
+      listItem.appendChild(newLabel);
+      
+      let casesensitiveCheckbox = document.createElement("checkbox");
+      casesensitiveCheckbox.setAttribute("checked", caseSensitive);
+      casesensitiveCheckbox.setAttribute("width", 60);
+      listItem.appendChild(casesensitiveCheckbox);
+      
+      let regexpCheckbox = document.createElement("checkbox");
+      regexpCheckbox.setAttribute("width", 60);
+      regexpCheckbox.setAttribute("checked", regexp);
+      listItem.appendChild(regexpCheckbox);
 
       return listItem;
     },
@@ -73,6 +100,7 @@ if("undefined" == typeof(SubjectCleanerSetting)){
 
       if(addDialogDto.confirmOK){
         if(addDialogDto.removal.removalString.length > 0){
+        
           var removalList = document.getElementById("removalList");
           var listItem = SubjectCleanerSetting.createListItem(
             addDialogDto.removal.removalString,
@@ -87,18 +115,18 @@ if("undefined" == typeof(SubjectCleanerSetting)){
     },
 
     edit : function(event){
-      var listCells = SubjectCleanerSetting.selectedItem.childNodes;
+      var listCells = SubjectCleanerSetting.selectedItem.children;
       var removal = {};
-      removal.removalString = listCells[0].getAttribute("label");
-      removal.caseSensitive = JSON.parse(listCells[1].getAttribute("checked"));
-      removal.regexp = JSON.parse(listCells[2].getAttribute("checked"));
+      removal.removalString = SubjectCleanerSetting.selectedItem.children[0].value;
+      removal.caseSensitive = JSON.parse(SubjectCleanerSetting.selectedItem.children[1].checked);
+      removal.regexp = JSON.parse(SubjectCleanerSetting.selectedItem.children[2].checked);
       var addDialogDto = new SubjectCleanerSetting.AddDialogDto(removal);
       window.openDialog("chrome://subjectcleaner/content/settingadd.xul",
         "SubjectCleanerSettingDialog", "chrome,modal,titlebar,centerscreen", addDialogDto);
 
       if(addDialogDto.confirmOK){
         if(addDialogDto.removal.removalString.length > 0){
-          listCells[0].setAttribute("label", addDialogDto.removal.removalString);
+          listCells[0].setAttribute("value", addDialogDto.removal.removalString);
           listCells[1].setAttribute("checked", addDialogDto.removal.caseSensitive);
           listCells[2].setAttribute("checked", addDialogDto.removal.regexp);
         }
@@ -110,7 +138,7 @@ if("undefined" == typeof(SubjectCleanerSetting)){
       var removeIndex = removalList.selectedIndex;
       var nextSelectedIndex = (removeIndex > 0) ? removeIndex - 1 : 0;
       removalList.scrollToIndex(nextSelectedIndex);
-      removalList.removeItemAt(removeIndex);
+      removalList.getItemAtIndex(removeIndex).remove();
       removalList.selectedIndex = nextSelectedIndex;
     },
 
@@ -134,11 +162,12 @@ if("undefined" == typeof(SubjectCleanerSetting)){
     },
 
     fill : function(removalList, autoRemove, autoFocus){
+    
       var viewRemovalList = document.getElementById("removalList");
       if(removalList !== null && removalList.length !== 0){
         var itemCount = viewRemovalList.itemCount;
         for(var i=itemCount-1; i>=0; i--){
-          viewRemovalList.removeItemAt(i);
+          viewRemovalList.getItemAtIndex(i).remove();
         }
 
         for(var i=0; i<removalList.length; i++){
