@@ -1,0 +1,22 @@
+{
+	"manifest_version": 2,
+	"name": "Subject-Cleaner",
+	"description": "Remove extra strings from the subject while composing the message on Thunderbird.",
+	"version": "1.4.1",
+	"author": "mi-yo",
+	"homepage_url": "https://github.com/mi-yo/thunderbird-subjectcleaner",
+	"legacy": true,
+	"applications": {
+		"gecko": {
+		"id": "subjectcleaner@mozilla.extensions",
+		"strict_min_version": "68.0"
+		}
+	},
+	
+	"legacy": {
+		"options": {
+			"page": "chrome://subjectcleaner/content/setting.xul",
+			"open_in_tab": false
+		}
+	}
+}
