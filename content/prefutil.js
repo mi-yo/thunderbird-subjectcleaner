@@ -15,8 +15,7 @@ if("undefined" == typeof(SubjectCleanerPrefUtil)){
     },
     getDefaultRemovalList : function(){
       try{
-      return JSON.parse("[{\"removalString\":\"\\\\[\\\\w+:\\\\d+\\\\](\\\\s|)\",\"caseSensitive\":false,\"regexp\":true},{\"removalString\":\"\\\\sRe:+\",\"caseSensitive\":false,\"regexp\":true}]");
-        //return JSON.parse(SubjectCleanerPrefUtil.PREF_DEFAULT.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, SubjectCleanerPrefUtil.getInterfaceComplexValueAtype()).data);
+        return JSON.parse(SubjectCleanerPrefUtil.PREF_DEFAULT.getComplexValue(SubjectCleanerPrefUtil.PREF_KEY_REMOVALLIST, SubjectCleanerPrefUtil.getInterfaceComplexValueAtype()).data);
       }catch(e){
         console.log(e);
         return new Array();
