@@ -13,3 +13,4 @@
 <!ENTITY setting.test.button.execute "実行">
 <!ENTITY setting.add.title "除去文字列設定">
 <!ENTITY setting.default "初期設定">
+<!ENTITY setting.apply "適用">
