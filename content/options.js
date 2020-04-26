@@ -54,9 +54,6 @@ if("undefined" == typeof(SubjectCleanerOptions)){
     treeClick : function(event){
       if(event.target.localName === "treechildren"){
         let tree = SubjectCleanerOptions.getRemovalListTree();
-//tb60?        
-//        let row = {}, col = {}, part = {};
-//        tree.getCellAt(event.clientX, event.clientY, row, col, part);
         let treeCellInfo = tree.getCellAt(event.clientX, event.clientY);
         if(treeCellInfo.row >= 0){
           switch(treeCellInfo.col.index){
