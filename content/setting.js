@@ -170,9 +170,6 @@ if("undefined" == typeof(SubjectCleanerSetting)){
       }
       SubjectCleanerPrefUtil.setAutoFocus(autoFocus);
 
-      // compatible with ver.1.2.0
-      SubjectCleanerPrefUtil.deleteOldPref();
-
       return true;
     },
 
